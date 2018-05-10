@@ -1,8 +1,8 @@
 # config valid only for current version of Capistrano
 lock '3.10.2'
 
-set :application, 'boston-cas'
-set :repo_url, 'git@github.com:greenriver/boston-cas.git'
+set :application, 'salt-lake-county-cas'
+set :repo_url, 'git@github.com:repp/salt-lake-county-cas.git'
 set :client, ENV.fetch('CLIENT')
 
 set :whenever_identifier, ->{ "#{fetch(:client)}-#{fetch(:application)}_#{fetch(:stage)}" }

@@ -1,6 +1,9 @@
 package.box
 package.tgz
 .vagrant/
+.idea
+.idea/
+.idea/*
 *.rbc
 capybara-*.html
 .rspec
