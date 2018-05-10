@@ -16,18 +16,18 @@ header {
   padding: 8px 10px 0;
   z-index: $zIndex-2--site-name;
   width: 228px;
-  // @media (min-width: $screen-sm-min) {
-  //   width: 228px;
-  // }
+  @media (min-width: $screen-sm-min) {
+    width: 250px;
+  }
 }
 .site-title {
   margin: 0 0 10px;
   @include montserrat-bold;
   text-transform: uppercase;
-  font-size: $font-size-h2;
   line-height: 1.0555;
+  font-size: 1.45rem;
   @media (min-width: $screen-sm-min) {
-    font-size: 1.9rem;
+    font-size: 1.6rem;
   }
 }
 .site-title a {
@@ -48,10 +48,11 @@ header {
     font-size: rem(16);
     line-height: 1.1;
     padding-top: 14px;
-    @include margin(null null null 243px);
+    @include margin(null null null 265px);
   }
   @media (min-width: $screen-md-min) {
     padding-top: 28px;
+    font-size: rem(14.5);
   }
   @media (min-width: $screen-lg-min) {
     font-size: rem(19);
@@ -104,7 +105,7 @@ header {
 }
 .utility {
   @media (min-width: $screen-sm-min) {
-    @include margin(null null null 243px);
+    @include margin(null null null 265px);
   }
 }
 .auth-support-links {

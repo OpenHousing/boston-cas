@@ -135,7 +135,7 @@ msgstr ""
 msgid "Stabilization Services Provider"
 msgstr ""
 
-msgid "The Salt Lake County Coordinated Access System is operated by ???"
+msgid "The Salt Lake County Coordinated Access System is operated by the Housing Authority of the County of Salt Lake."
 msgstr ""
 
 msgid "There will be a criminal background hearing"

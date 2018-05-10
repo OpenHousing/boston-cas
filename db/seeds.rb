@@ -120,7 +120,7 @@ unless Rails.env =~ /production|staging/
 
   initial_password = Faker::Internet.password
   user = User.new
-  user.email = 'noreply@example.com'
+  user.email = 'ryan@example.com'
   user.first_name = "Sample"
   user.last_name = "Admin"
   user.password = user.password_confirmation = initial_password
@@ -129,6 +129,7 @@ unless Rails.env =~ /production|staging/
   # user.admin = true
   # user.dnd_staff = true
   user.receive_initial_notification = true
+  user.roles = Role.where(name: 'admin')
   user.save!
   puts "Created initial admin email:#{user.email}  password:#{user.password}"
 end
