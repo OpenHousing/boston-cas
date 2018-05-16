@@ -110,3 +110,5 @@ group :test do
   gem 'minitest-reporters'
   gem 'rspec-mocks'
 end
+
+gem 'capistrano-passenger'

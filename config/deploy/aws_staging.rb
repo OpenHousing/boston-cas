@@ -9,6 +9,8 @@ set :linked_dirs, fetch(:linked_dirs, []).push('certificates', 'key', '.well_kno
 
 set :linked_files, fetch(:linked_files, []).push('config/letsencrypt_plugin.yml')
 
+set :whenever_command, -> { "bash -l -c 'cd #{fetch(:release_path)} && /usr/local/rvm/bin/rvmsudo ./bin/bundle exec whenever -u #{fetch(:cron_user)} --update-crontab #{fetch(:whenever_identifier)} --set \"environment=#{fetch(:rails_env)}\" '" }
+
 namespace :deploy do
   before :published, :translations do
     on roles(:db)  do
