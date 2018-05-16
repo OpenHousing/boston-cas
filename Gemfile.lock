@@ -221,7 +221,6 @@ GEM
     kaminari (0.17.0)
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
-    kgio (2.10.0)
     launchy (2.4.3)
       addressable (~> 2.3)
     letsencrypt_plugin (0.0.9)
@@ -323,7 +322,6 @@ GEM
       activesupport (= 4.2.8)
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
-    raindrops (0.16.0)
     rake (12.3.1)
     ransack (1.8.3)
       actionpack (>= 3.0)
@@ -426,12 +424,6 @@ GEM
       thread_safe (~> 0.1)
     uglifier (3.0.4)
       execjs (>= 0.3.0, < 3)
-    unicorn (5.1.0)
-      kgio (~> 2.6)
-      raindrops (~> 0.7)
-    unicorn-rails (2.2.0)
-      rack
-      unicorn
     url_safe_base64 (0.2.2)
     validates_email_format_of (1.6.3)
       i18n
@@ -529,7 +521,6 @@ DEPENDENCIES
   test-unit (~> 3.0)
   timecop
   uglifier
-  unicorn-rails
   validates_email_format_of
   virtus
   web-console

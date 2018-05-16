@@ -30,8 +30,8 @@ gem 'kaminari'
 gem 'ransack'
 
 # No attachment to unicorn here-- probably want to go with passenger or puma
-gem 'unicorn-rails'
 gem 'redis-rails'
+gem 'puma'
 
 gem "lograge"
 gem 'activerecord-session_store'
@@ -81,7 +81,6 @@ group :development do
   gem 'capistrano-rails'
   gem 'capistrano3-puma'
   gem 'capistrano3-delayed-job', '~> 1.0'
-  gem 'puma'
 
   # gem 'rack-mini-profiler'
   gem 'test-unit', '~> 3.0', require: false
