@@ -1,5 +1,6 @@
 set :deploy_to, "/var/www/#{fetch(:client)}-cas-staging"
 set :rails_env, "staging"
+set :passenger_restart_with_touch, true
 
 ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
