@@ -88,9 +88,8 @@ GEM
     capistrano-rvm (0.1.2)
       capistrano (~> 3.0)
       sshkit (~> 1.2)
-    capistrano-unicorn-nginx (4.1.0)
-      capistrano (>= 3.1)
-      sshkit (>= 1.2.0)
+    capistrano-unicorn (0.1.10)
+      capistrano
     capistrano3-delayed-job (1.7.5)
       capistrano (~> 3.0, >= 3.0.0)
       daemons (~> 1.2.4)
@@ -470,7 +469,7 @@ DEPENDENCIES
   capistrano-bundler
   capistrano-rails
   capistrano-rvm
-  capistrano-unicorn-nginx (~> 4.1.0)
+  capistrano-unicorn
   capistrano3-delayed-job (~> 1.0)
   capybara
   coffee-rails
