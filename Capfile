@@ -21,9 +21,7 @@ require 'capistrano/rvm'
 require 'capistrano/bundler'
 require 'capistrano/rails/assets'
 require 'capistrano/rails/migrations'
-unless ENV['NO_PASSENGER']
-  require 'capistrano/passenger'
-end
+require 'capistrano/unicorn_nginx'
 require "whenever/capistrano"
 
 require "capistrano/scm/git"

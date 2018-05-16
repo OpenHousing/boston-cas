@@ -32,7 +32,6 @@ gem 'ransack'
 # No attachment to unicorn here-- probably want to go with passenger or puma
 gem 'unicorn-rails'
 gem 'redis-rails'
-gem 'passenger'
 
 gem "lograge"
 gem 'activerecord-session_store'
@@ -79,9 +78,9 @@ group :development do
   gem 'capistrano'
   gem 'capistrano-bundler'
   gem 'capistrano-rvm'
-  gem 'capistrano-passenger'
   gem 'capistrano-rails'
   gem 'capistrano3-delayed-job', '~> 1.0'
+  gem 'capistrano-unicorn-nginx', '~> 4.1.0'
   gem 'puma'
 
   # gem 'rack-mini-profiler'
