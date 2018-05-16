@@ -32,6 +32,7 @@ gem 'ransack'
 # No attachment to unicorn here-- probably want to go with passenger or puma
 gem 'unicorn-rails'
 gem 'redis-rails'
+gem 'passenger'
 
 gem "lograge"
 gem 'activerecord-session_store'
@@ -111,4 +112,3 @@ group :test do
   gem 'rspec-mocks'
 end
 
-gem 'capistrano-passenger'
