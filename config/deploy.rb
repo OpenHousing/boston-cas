@@ -37,7 +37,7 @@ end
 # Delayed Job
 if ENV['DELAYED_JOB_SYSTEMD']=='true'
   unless ENV['SKIP_JOBS']=='true'
-    after 'passenger:restart', 'delayed_job:restart'
+    after 'unicorn:restart', 'delayed_job:restart'
   end
 else
   set :delayed_job_workers, 2
@@ -51,7 +51,7 @@ task :group_writable do
     execute "chgrp --quiet ubuntu -R #{fetch(:deploy_to)} || echo ok"
   end
 end
-after 'passenger:restart', :group_writable
+after 'unicorn:restart', :group_writable
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
