@@ -27,6 +27,10 @@ else
   }
 end
 
+set :nginx_ssl_certificate, "/var/www/slc-cas-staging/current/certificates/saltlakecounty-housing.brighthive.io-cert.pem"
+set :nginx_ssl_certificate_key, "/var/www/slc-cas-staging/current/certificates/saltlakecounty-housing.brighthive.io-key.pem"
+set :nginx_use_ssl, true
+
 set :ssh_port, ENV.fetch('SSH_PORT') { '22' }
 set :deploy_user , ENV.fetch('DEPLOY_USER')
 
