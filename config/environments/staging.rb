@@ -20,7 +20,7 @@ Rails.application.configure do
   config.cache_store = :redis_store, Rails.application.config_for(:cache_store), { expires_in: 8.hours }
   config.sandbox_email_mode = true
   config.action_mailer.delivery_method = deliver_method
-  config.action_mailer.default_url_options = { host: ENV['HOSTNAME'], protocol: :http}
+  config.action_mailer.default_url_options = { host: ENV['HOSTNAME'], protocol: :https}
   if deliver_method == :smtp
     config.action_mailer.smtp_settings = {
       address: ENV['SMTP_SERVER'],
