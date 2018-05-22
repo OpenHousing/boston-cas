@@ -1,6 +1,6 @@
 .detail-box--label Funding Source
 .detail-box--value
-  = @program.funding_source.name
+  = @program.funding_source.present? ? @program.funding_source.name : 'None'
 .detail-box--label Program
 .detail-box--value
   = @program.name
