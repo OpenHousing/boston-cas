@@ -49,14 +49,14 @@ else
   set :delayed_job_roles, [:job]
 end
 
-task :group_writable_and_owned_by_ubuntu do
+task :group_writable_and_owned_by_deploy do
   on roles(:web) do
     execute "chmod --quiet g+w -R  #{fetch(:deploy_to)} || echo ok"
-    execute "sudo chown --quiet ubuntu:ubuntu -R #{fetch(:deploy_to)} || echo ok"
+    execute "sudo chown --quiet deploy:deploy -R #{fetch(:deploy_to)} || echo ok"
   end
 end
-before 'puma:restart',  :group_writable_and_owned_by_ubuntu
-after 'deploy:log_revision', :group_writable_and_owned_by_ubuntu
+before 'puma:restart',  :group_writable_and_owned_by_deploy
+after 'deploy:log_revision', :group_writable_and_owned_by_deploy
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
