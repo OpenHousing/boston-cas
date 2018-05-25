@@ -34,9 +34,7 @@ set :nginx_use_ssl, true
 set :ssh_port, ENV.fetch('SSH_PORT') { '22' }
 set :deploy_user , ENV.fetch('DEPLOY_USER')
 
-if ENV['RVM_CUSTOM_PATH']
-  set :rvm_custom_path, ENV['RVM_CUSTOM_PATH']
-end
+set :rvm_custom_path, ENV.fetch('RVM_CUSTOM_PATH') { '/usr/share/rvm' }
 
 # Delayed Job
 if ENV['DELAYED_JOB_SYSTEMD']=='true'
@@ -49,13 +47,14 @@ else
   set :delayed_job_roles, [:job]
 end
 
-task :group_writable do
+task :group_writable_and_owned_by_ubuntu do
   on roles(:web) do
     execute "chmod --quiet g+w -R  #{fetch(:deploy_to)} || echo ok"
-    execute "chgrp --quiet ubuntu -R #{fetch(:deploy_to)} || echo ok"
+    execute "sudo chown --quiet ubuntu:ubuntu -R #{fetch(:deploy_to)} || echo ok"
   end
 end
-after 'puma:restart', :group_writable
+before 'puma:restart',  :group_writable_and_owned_by_ubuntu
+after 'deploy:log_revision', :group_writable_and_owned_by_ubuntu
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
@@ -86,9 +85,7 @@ set :linked_files, fetch(:linked_files, []).push(
 # Default value for linked_dirs is []
 set :linked_dirs, fetch(:linked_dirs, []).push(
   'log',
-  'tmp/pids',
-  'tmp/cache',
-  'tmp/sockets',
+  'tmp',
   'public/system',
   'var',
   'app/assets/stylesheets/theme/styles',
@@ -123,7 +120,3 @@ task :echo_options do
   puts "Deploying as: #{fetch(:deploy_user)} on port: #{fetch(:ssh_port)} to location: #{deploy_to}\n\n"
 end
 after 'git:wrapper', :echo_options
-
-
-
-
