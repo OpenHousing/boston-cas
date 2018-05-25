@@ -34,7 +34,9 @@ set :nginx_use_ssl, true
 set :ssh_port, ENV.fetch('SSH_PORT') { '22' }
 set :deploy_user , ENV.fetch('DEPLOY_USER')
 
-set :rvm_custom_path, ENV.fetch('RVM_CUSTOM_PATH') { '/usr/share/rvm' }
+if ENV['RVM_CUSTOM_PATH']
+  set :rvm_custom_path, ENV['RVM_CUSTOM_PATH']
+end
 
 # Delayed Job
 if ENV['DELAYED_JOB_SYSTEMD']=='true'
