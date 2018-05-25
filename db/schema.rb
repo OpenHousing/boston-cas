@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180504202048) do
+ActiveRecord::Schema.define(version: 20180511081334) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -73,6 +73,15 @@ ActiveRecord::Schema.define(version: 20180504202048) do
   add_index "client_contacts", ["client_id"], name: "index_client_contacts_on_client_id", using: :btree
   add_index "client_contacts", ["contact_id"], name: "index_client_contacts_on_contact_id", using: :btree
   add_index "client_contacts", ["deleted_at"], name: "index_client_contacts_on_deleted_at", using: :btree
+
+  create_table "client_notes", force: :cascade do |t|
+    t.integer  "user_id",    null: false
+    t.integer  "client_id",  null: false
+    t.string   "note"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "client_opportunity_match_contacts", force: :cascade do |t|
     t.integer  "match_id",                              null: false
@@ -145,7 +154,6 @@ ActiveRecord::Schema.define(version: 20180504202048) do
     t.integer  "domestic_violence"
     t.date     "calculated_first_homeless_night"
     t.boolean  "available",                                         default: true,  null: false
-    t.boolean  "available_candidate",                               default: true
     t.string   "homephone"
     t.string   "cellphone"
     t.string   "workphone"
@@ -190,17 +198,17 @@ ActiveRecord::Schema.define(version: 20180504202048) do
     t.boolean  "sober_housing",                                     default: false
     t.jsonb    "enrolled_project_ids"
     t.jsonb    "active_cohort_ids"
+    t.string   "client_identifier"
+    t.integer  "assessment_score",                                  default: 0,     null: false
   end
 
   add_index "clients", ["deleted_at"], name: "index_clients_on_deleted_at", using: :btree
 
   create_table "configs", force: :cascade do |t|
-    t.integer "stalled_interval",                                     null: false
-    t.integer "dnd_interval",                                         null: false
-    t.string  "warehouse_url",                                        null: false
-    t.string  "engine_mode",          default: "first-date-homeless", null: false
+    t.integer "dnd_interval",                         null: false
+    t.string  "warehouse_url",                        null: false
     t.boolean "require_cori_release", default: true
-    t.integer "ami",                  default: 66600,                 null: false
+    t.integer "ami",                  default: 66600, null: false
   end
 
   create_table "contacts", force: :cascade do |t|
@@ -229,7 +237,7 @@ ActiveRecord::Schema.define(version: 20180504202048) do
     t.string   "name"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
-    t.string   "db_itentifier"
+    t.string   "db_identifier"
   end
 
   create_table "date_of_birth_quality_codes", force: :cascade do |t|
@@ -238,6 +246,20 @@ ActiveRecord::Schema.define(version: 20180504202048) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "deidentified_clients", force: :cascade do |t|
+    t.string   "client_identifier"
+    t.integer  "assessment_score"
+    t.string   "agency"
+    t.string   "first_name",        default: "Anonymous"
+    t.string   "last_name",         default: "Anonymous"
+    t.jsonb    "active_cohort_ids"
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
+    t.datetime "deleted_at"
+  end
+
+  add_index "deidentified_clients", ["deleted_at"], name: "index_deidentified_clients_on_deleted_at", using: :btree
 
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer  "priority",   default: 0, null: false
@@ -409,6 +431,14 @@ ActiveRecord::Schema.define(version: 20180504202048) do
   add_index "match_events", ["not_working_with_client_reason_id"], name: "index_match_events_on_not_working_with_client_reason_id", using: :btree
   add_index "match_events", ["notification_id"], name: "index_match_events_on_notification_id", using: :btree
 
+  create_table "match_prioritizations", force: :cascade do |t|
+    t.string   "type",                      null: false
+    t.boolean  "active",     default: true, null: false
+    t.integer  "weight",     default: 10,   null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
+
   create_table "match_progress_updates", force: :cascade do |t|
     t.string   "type",                null: false
     t.integer  "match_id",            null: false
@@ -432,6 +462,18 @@ ActiveRecord::Schema.define(version: 20180504202048) do
   add_index "match_progress_updates", ["match_id"], name: "index_match_progress_updates_on_match_id", using: :btree
   add_index "match_progress_updates", ["notification_id"], name: "index_match_progress_updates_on_notification_id", using: :btree
   add_index "match_progress_updates", ["type"], name: "index_match_progress_updates_on_type", using: :btree
+
+  create_table "match_routes", force: :cascade do |t|
+    t.string   "type",                                        null: false
+    t.boolean  "active",                      default: true,  null: false
+    t.integer  "weight",                      default: 10,    null: false
+    t.boolean  "contacts_editable_by_hsa",    default: false, null: false
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
+    t.integer  "stalled_interval",            default: 7,     null: false
+    t.integer  "match_prioritization_id",     default: 5,     null: false
+    t.boolean  "should_cancel_other_matches", default: true,  null: false
+  end
 
   create_table "messages", force: :cascade do |t|
     t.string   "from",                       null: false
@@ -514,6 +556,24 @@ ActiveRecord::Schema.define(version: 20180504202048) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "program_contacts", force: :cascade do |t|
+    t.integer  "program_id",                            null: false
+    t.integer  "contact_id",                            null: false
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
+    t.datetime "deleted_at"
+    t.boolean  "dnd_staff",             default: false, null: false
+    t.boolean  "housing_subsidy_admin", default: false, null: false
+    t.boolean  "client",                default: false, null: false
+    t.boolean  "housing_search_worker", default: false, null: false
+    t.boolean  "shelter_agency",        default: false, null: false
+    t.boolean  "ssp",                   default: false, null: false
+    t.boolean  "hsp",                   default: false, null: false
+  end
+
+  add_index "program_contacts", ["contact_id"], name: "index_program_contacts_on_contact_id", using: :btree
+  add_index "program_contacts", ["program_id"], name: "index_program_contacts_on_program_id", using: :btree
+
   create_table "program_services", force: :cascade do |t|
     t.integer  "program_id"
     t.integer  "service_id"
@@ -536,6 +596,7 @@ ActiveRecord::Schema.define(version: 20180504202048) do
     t.datetime "updated_at",                          null: false
     t.datetime "deleted_at"
     t.boolean  "confidential",        default: false, null: false
+    t.integer  "match_route_id",      default: 1
   end
 
   add_index "programs", ["contact_id"], name: "index_programs_on_contact_id", using: :btree
@@ -614,6 +675,8 @@ ActiveRecord::Schema.define(version: 20180504202048) do
     t.jsonb    "enrolled_project_ids"
     t.jsonb    "active_cohort_ids"
     t.integer  "vispdat_priority_score",                 default: 0
+    t.string   "client_identifier"
+    t.integer  "assessment_score",                       default: 0,     null: false
   end
 
   add_index "project_clients", ["calculated_chronic_homelessness"], name: "index_project_clients_on_calculated_chronic_homelessness", using: :btree
@@ -670,58 +733,62 @@ ActiveRecord::Schema.define(version: 20180504202048) do
   add_index "requirements", ["rule_id"], name: "index_requirements_on_rule_id", using: :btree
 
   create_table "roles", force: :cascade do |t|
-    t.string   "name",                                                null: false
-    t.datetime "created_at",                                          null: false
-    t.datetime "updated_at",                                          null: false
-    t.boolean  "can_view_all_clients",                default: false
-    t.boolean  "can_edit_all_clients",                default: false
-    t.boolean  "can_participate_in_matches",          default: false
-    t.boolean  "can_view_all_matches",                default: false
-    t.boolean  "can_view_own_closed_matches",         default: false
-    t.boolean  "can_see_alternate_matches",           default: false
-    t.boolean  "can_edit_match_contacts",             default: false
-    t.boolean  "can_approve_matches",                 default: false
-    t.boolean  "can_reject_matches",                  default: false
-    t.boolean  "can_act_on_behalf_of_match_contacts", default: false
-    t.boolean  "can_view_reports",                    default: false
-    t.boolean  "can_edit_roles",                      default: false
-    t.boolean  "can_edit_users",                      default: false
-    t.boolean  "can_view_full_ssn",                   default: false
-    t.boolean  "can_view_full_dob",                   default: false
-    t.boolean  "can_view_dmh_eligibility",            default: false
-    t.boolean  "can_view_va_eligibility",             default: false
-    t.boolean  "can_view_hues_eligibility",           default: false
-    t.boolean  "can_view_hiv_positive_eligibility",   default: false
-    t.boolean  "can_view_client_confidentiality",     default: false
-    t.boolean  "can_view_buildings",                  default: false
-    t.boolean  "can_edit_buildings",                  default: false
-    t.boolean  "can_view_funding_sources",            default: false
-    t.boolean  "can_edit_funding_sources",            default: false
-    t.boolean  "can_view_subgrantees",                default: false
-    t.boolean  "can_edit_subgrantees",                default: false
-    t.boolean  "can_view_vouchers",                   default: false
-    t.boolean  "can_edit_vouchers",                   default: false
-    t.boolean  "can_view_programs",                   default: false
-    t.boolean  "can_edit_programs",                   default: false
-    t.boolean  "can_view_opportunities",              default: false
-    t.boolean  "can_edit_opportunities",              default: false
-    t.boolean  "can_reissue_notifications",           default: false
-    t.boolean  "can_view_units",                      default: false
-    t.boolean  "can_edit_units",                      default: false
-    t.boolean  "can_add_vacancies",                   default: false
-    t.boolean  "can_view_contacts",                   default: false
-    t.boolean  "can_edit_contacts",                   default: false
-    t.boolean  "can_view_rule_list",                  default: false
-    t.boolean  "can_edit_rule_list",                  default: false
-    t.boolean  "can_view_available_services",         default: false
-    t.boolean  "can_edit_available_services",         default: false
-    t.boolean  "can_assign_services",                 default: false
-    t.boolean  "can_assign_requirements",             default: false
-    t.boolean  "can_become_other_users",              default: false
-    t.boolean  "can_edit_translations",               default: false
-    t.boolean  "can_view_vspdats",                    default: false
-    t.boolean  "can_manage_config",                   default: false
-    t.boolean  "can_create_overall_note",             default: false
+    t.string   "name",                                                    null: false
+    t.datetime "created_at",                                              null: false
+    t.datetime "updated_at",                                              null: false
+    t.boolean  "can_view_all_clients",                    default: false
+    t.boolean  "can_edit_all_clients",                    default: false
+    t.boolean  "can_participate_in_matches",              default: false
+    t.boolean  "can_view_all_matches",                    default: false
+    t.boolean  "can_view_own_closed_matches",             default: false
+    t.boolean  "can_see_alternate_matches",               default: false
+    t.boolean  "can_edit_match_contacts",                 default: false
+    t.boolean  "can_approve_matches",                     default: false
+    t.boolean  "can_reject_matches",                      default: false
+    t.boolean  "can_act_on_behalf_of_match_contacts",     default: false
+    t.boolean  "can_view_reports",                        default: false
+    t.boolean  "can_edit_roles",                          default: false
+    t.boolean  "can_edit_users",                          default: false
+    t.boolean  "can_view_full_ssn",                       default: false
+    t.boolean  "can_view_full_dob",                       default: false
+    t.boolean  "can_view_dmh_eligibility",                default: false
+    t.boolean  "can_view_va_eligibility",                 default: false
+    t.boolean  "can_view_hues_eligibility",               default: false
+    t.boolean  "can_view_hiv_positive_eligibility",       default: false
+    t.boolean  "can_view_client_confidentiality",         default: false
+    t.boolean  "can_view_buildings",                      default: false
+    t.boolean  "can_edit_buildings",                      default: false
+    t.boolean  "can_view_funding_sources",                default: false
+    t.boolean  "can_edit_funding_sources",                default: false
+    t.boolean  "can_view_subgrantees",                    default: false
+    t.boolean  "can_edit_subgrantees",                    default: false
+    t.boolean  "can_view_vouchers",                       default: false
+    t.boolean  "can_edit_vouchers",                       default: false
+    t.boolean  "can_view_programs",                       default: false
+    t.boolean  "can_edit_programs",                       default: false
+    t.boolean  "can_view_opportunities",                  default: false
+    t.boolean  "can_edit_opportunities",                  default: false
+    t.boolean  "can_reissue_notifications",               default: false
+    t.boolean  "can_view_units",                          default: false
+    t.boolean  "can_edit_units",                          default: false
+    t.boolean  "can_add_vacancies",                       default: false
+    t.boolean  "can_view_contacts",                       default: false
+    t.boolean  "can_edit_contacts",                       default: false
+    t.boolean  "can_view_rule_list",                      default: false
+    t.boolean  "can_edit_rule_list",                      default: false
+    t.boolean  "can_view_available_services",             default: false
+    t.boolean  "can_edit_available_services",             default: false
+    t.boolean  "can_assign_services",                     default: false
+    t.boolean  "can_assign_requirements",                 default: false
+    t.boolean  "can_become_other_users",                  default: false
+    t.boolean  "can_edit_translations",                   default: false
+    t.boolean  "can_view_vspdats",                        default: false
+    t.boolean  "can_manage_config",                       default: false
+    t.boolean  "can_create_overall_note",                 default: false
+    t.boolean  "can_delete_client_notes",                 default: false
+    t.boolean  "can_enter_deidentified_clients",          default: false
+    t.boolean  "can_manage_deidentified_clients",         default: false
+    t.boolean  "can_add_cohorts_to_deidentified_clients", default: false
   end
 
   add_index "roles", ["name"], name: "index_roles_on_name", using: :btree
@@ -857,6 +924,14 @@ ActiveRecord::Schema.define(version: 20180504202048) do
   end
 
   add_index "translation_texts", ["translation_key_id"], name: "index_translation_texts_on_translation_key_id", using: :btree
+
+  create_table "unavailable_as_candidate_fors", force: :cascade do |t|
+    t.integer "client_id",        null: false
+    t.string  "match_route_type", null: false
+  end
+
+  add_index "unavailable_as_candidate_fors", ["client_id"], name: "index_unavailable_as_candidate_fors_on_client_id", using: :btree
+  add_index "unavailable_as_candidate_fors", ["match_route_type"], name: "index_unavailable_as_candidate_fors_on_match_route_type", using: :btree
 
   create_table "units", force: :cascade do |t|
     t.integer  "id_in_data_source"
